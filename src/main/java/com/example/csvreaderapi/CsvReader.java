@@ -1,6 +1,10 @@
 package com.example.csvreaderapi;
 
-import java.io.BufferedReader;
+import com.example.csvreaderapi.storage.DynamoDbStorage;
+import com.opencsv.CSVReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,28 +12,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Service
 public class CsvReader {
+    @Autowired
+    private DynamoDbStorage dynamoDbStorage;
 
-    public List<List<String>> loadCsv() throws IOException {
+    public List<List<String>> loadCsv(String parity) throws IOException {
         InputStream inputStream = getClass().getResourceAsStream("/PracticeFile.csv");
-//TODO - use openCSV library
-        BufferedReader csvReader = null;
         List<List<String>> csvList = new ArrayList<List<String>>();
-        String csvRecord = null;
+        String tableName = "SarahTable3";
+        dynamoDbStorage.createTable(tableName);
+        CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "UTF-8"));
+        String[] values = null;
         int counter = 0;
-        csvReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-        String headers = csvReader.readLine();
-        //Create the table dynamoDB
-        while ((csvRecord = csvReader.readLine()) != null) {
-            counter ++;
-            //Odd even logic
-            //Insert into DB - pass counter, headers and list
-            //insert method will need to map the headers to the list in dictionary
-
-            String[] values = csvRecord.split(",");
-            csvList.add(Arrays.asList(values));
+        String[] headers = csvReader.readNext();
+        while((values = csvReader.readNext()) != null){
+            counter++;
+            if(counter % 2 == 0 && parity.equals("EVEN")){
+                csvList.add(Arrays.asList(values));
+                dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
+            }
+            else if(counter % 2 != 0 && parity.equals("ODD")){
+                csvList.add(Arrays.asList(values));
+                dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
+            }
+            else if (parity == null || parity.length() == 0){
+                csvList.add(Arrays.asList(values));
+                dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
+            }
         }
-
         return csvList;
     }
 

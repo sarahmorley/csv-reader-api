@@ -5,9 +5,9 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.example.csvreaderapi.CsvReader;
-import com.example.csvreaderapi.storage.DynamoDb;
+import com.example.csvreaderapi.storage.DynamoDbStorage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,20 +18,12 @@ public class Config {
     private String awsDynamoDBUrl = "http://localhost:8000";
 
     @Bean
-    public CsvReader csvReader() {return new CsvReader();}
-
-    @Bean
-    public DynamoDb dynamoDb() {return new DynamoDb();}
-
-
-
-    @Bean
     public AWSStaticCredentialsProvider amazonAWSCredentials() {
         return new AWSStaticCredentialsProvider(new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey));
     }
 
     @Bean
-    public AmazonDynamoDB dynamoDB(AWSStaticCredentialsProvider amazonAWSCredentials){
+    public AmazonDynamoDB dynamoDbClient(AWSStaticCredentialsProvider amazonAWSCredentials){
         AmazonDynamoDB dynamo = AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(awsDynamoDBUrl, Regions.US_EAST_1.name()))
                 .withCredentials(amazonAWSCredentials)
@@ -40,8 +32,9 @@ public class Config {
     }
 
     @Bean
-    public DynamoDBMapper dbMapper (AmazonDynamoDB dynamoDB) {
-        DynamoDBMapper mapper = new DynamoDBMapper(dynamoDB);
-        return mapper;
+    public DynamoDB dynamoDB(AmazonDynamoDB client){
+        DynamoDB dynamo = new DynamoDB(client);
+        return dynamo;
     }
+
 }
