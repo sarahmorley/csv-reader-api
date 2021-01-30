@@ -15,3 +15,11 @@ Based on the parameter only store either the odd or even rows in the database
 If parameter is not passed in then insert all rows into the database
 Return the CSV rows (all, even, or odd rows based on parameter) as a String Array
 And unit tests to verify the logic.
+
+
+
+
+
+
+Running Dynamo locally
+java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
