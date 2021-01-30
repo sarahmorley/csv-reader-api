@@ -3,10 +3,12 @@ package com.example.csvreaderapi.service;
 import com.example.csvreaderapi.storage.DynamoDbStorage;
 import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,7 +21,9 @@ public class CsvReader {
     @Autowired
     private DynamoDbStorage dynamoDbStorage;
 
-    String csvFilePath = "/PracticeFile.csv";
+    @Value("${file.path}")
+    private String csvFilePath;
+
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
 
     public List<List<String>> loadCsv(String parity) throws IOException {
@@ -38,15 +42,15 @@ public class CsvReader {
 
         while((values = csvReader.readNext()) != null){
             counter++;
-            if(counter % 2 == 0 && parity.equals("EVEN")){
+            if(counter % 2 == 0 && parity != null && parity.equals("EVEN")){
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
             }
-            else if(counter % 2 != 0 && parity.equals("ODD")){
+            else if(counter % 2 != 0 && parity != null && parity.equals("ODD")){
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
             }
-            else if (parity == null || parity.length() == 0){
+            else if (parity == null || parity.equals("")){
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
             }

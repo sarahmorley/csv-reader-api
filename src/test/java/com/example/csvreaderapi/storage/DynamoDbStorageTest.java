@@ -1,4 +1,4 @@
-package com.example.csvreaderapi;
+package com.example.csvreaderapi.storage;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -56,6 +56,7 @@ public class DynamoDbStorageTest {
         String actualAddress = actualMap.get("address").toString();
         String actualName = actualMap.get("name").toString();
         String actualCsvRowNumber =  actualMap.get("CsvRowNumber").toString();
+
         assertEquals("{S: Galway,}", actualAddress);
         assertEquals("{S: Sarah,}", actualName);
         assertEquals("{N: 3,}", actualCsvRowNumber);

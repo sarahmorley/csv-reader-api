@@ -1,4 +1,4 @@
-package com.example.csvreaderapi;
+package com.example.csvreaderapi.service;
 
 import com.example.csvreaderapi.configuration.TestConfig;
 import com.example.csvreaderapi.service.CsvReader;
