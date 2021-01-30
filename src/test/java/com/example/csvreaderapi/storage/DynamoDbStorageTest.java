@@ -37,14 +37,6 @@ public class DynamoDbStorageTest {
 
         dynamoDbStorage.save("testTable", 3, headers, values);
 
-        UUID hashkeyValue = UUID.randomUUID();
-        Map<String, AttributeValue> map = new HashMap<String, AttributeValue>();
-        map.put("hashKey", new AttributeValue(hashkeyValue.toString()));
-        map.put("rangeKey", new AttributeValue().withN(String.valueOf(3)));
-        for (int i=0; i<headers.size(); i++) {
-            map.put(headers.get(i), new AttributeValue(values.get(i)));
-        }
-
         ArgumentCaptor <PutItemRequest> argumentCaptor = ArgumentCaptor.forClass(PutItemRequest.class);
         Mockito.verify(dynamoDbClient).putItem(argumentCaptor.capture());
         PutItemRequest capturedArgument = argumentCaptor.getValue();
@@ -53,12 +45,14 @@ public class DynamoDbStorageTest {
         assertEquals("testTable", actualTableName);
 
         Map<String, AttributeValue> actualMap = capturedArgument.getItem();
-        String actualAddress = actualMap.get("address").toString();
-        String actualName = actualMap.get("name").toString();
-        String actualCsvRowNumber =  actualMap.get("CsvRowNumber").toString();
+        String actualAddress = actualMap.get("address").getS();
+        String actualName = actualMap.get("name").getS();
+        String actualCsvRowNumber =  actualMap.get("CsvRowNumber").getN();
+        String actualUUID = actualMap.get("CsvRowId").getS();
 
-        assertEquals("{S: Galway,}", actualAddress);
-        assertEquals("{S: Sarah,}", actualName);
-        assertEquals("{N: 3,}", actualCsvRowNumber);
+        assertEquals("Galway", actualAddress);
+        assertEquals("Sarah", actualName);
+        assertEquals("3", actualCsvRowNumber);
+        assertNotNull(actualUUID);
     }
 }

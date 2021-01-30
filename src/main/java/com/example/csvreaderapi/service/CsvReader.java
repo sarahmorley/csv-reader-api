@@ -30,7 +30,7 @@ public class CsvReader {
         String[] values = null;
         int counter = 0;
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String tableName = csvFilePath.substring(1) + "_" + sdf.format(timestamp);
+        String tableName = "Rows_" + sdf.format(timestamp);
 
         InputStream inputStream = getClass().getResourceAsStream(csvFilePath);
         List<List<String>> csvList = new ArrayList<List<String>>();
@@ -42,15 +42,16 @@ public class CsvReader {
 
         while((values = csvReader.readNext()) != null){
             counter++;
-            if(counter % 2 == 0 && parity != null && parity.equals("EVEN")){
+            //TOdo testing this part is key
+            if(counter % 2 == 0 && parity.equals("EVEN")){
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
             }
-            else if(counter % 2 != 0 && parity != null && parity.equals("ODD")){
+            else if(counter % 2 != 0 && parity.equals("ODD")){
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
             }
-            else if (parity == null || parity.equals("")){
+            else if (parity.equals("")){
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
             }

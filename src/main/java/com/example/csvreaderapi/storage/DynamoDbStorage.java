@@ -17,7 +17,7 @@ public class DynamoDbStorage {
     @Autowired
     private DynamoDB dynamo;
 
-    final String hashKey = "Id";
+    final String hashKey = "CsvRowId";
     final String rangeKey = "CsvRowNumber";
 
     public void createTable(String tableName) {
