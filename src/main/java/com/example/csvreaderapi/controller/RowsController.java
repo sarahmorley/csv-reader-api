@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 public class RowsController {
@@ -17,7 +16,7 @@ public class RowsController {
 
     @GetMapping("/rows")
     public List<List<String>> getRows (@RequestParam String parity) throws IOException {
-        parity = parity.toUpperCase(Locale.ROOT);
+        parity = parity.toUpperCase();
         List<List<String>> csvList = csvReader.loadCsv(parity);
 
         return csvList;

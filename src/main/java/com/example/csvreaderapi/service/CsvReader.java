@@ -50,8 +50,9 @@ public class CsvReader {
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
             }
+
         }
         return csvList;
     }
-    
+
 }
