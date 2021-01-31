@@ -21,7 +21,6 @@ public class DynamoDbStorage {
     final String rangeKey = "CsvRowNumber";
 
     public void createTable(String tableName) {
-
         List<AttributeDefinition> attributeDefinitions= new ArrayList<AttributeDefinition>();
         attributeDefinitions.add(new AttributeDefinition().withAttributeName(hashKey).withAttributeType("S"));
         attributeDefinitions.add(new AttributeDefinition().withAttributeName(rangeKey).withAttributeType("N"));
@@ -50,10 +49,10 @@ public class DynamoDbStorage {
 
     public void save(String tableName, int counter, List<String> headers, List<String> values){
         UUID hashkeyValue = UUID.randomUUID();
-
         Map<String, AttributeValue> map = new HashMap<String, AttributeValue>();
         map.put(hashKey, new AttributeValue(hashkeyValue.toString()));
         map.put(rangeKey, new AttributeValue().withN(String.valueOf(counter)));
+
         for (int i=0; i<headers.size(); i++) {
             map.put(headers.get(i), new AttributeValue(values.get(i)));
         }

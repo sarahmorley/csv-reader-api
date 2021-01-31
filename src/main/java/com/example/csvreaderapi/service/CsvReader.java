@@ -26,19 +26,18 @@ public class CsvReader {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
 
     public List<List<String>> loadCsv(String parity) throws IOException {
-        String[] values = null;
-        int counter = 0;
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String tableName = "CsvRows_" + sdf.format(timestamp);
-
         InputStream inputStream = getClass().getResourceAsStream(csvFilePath);
         List<List<String>> csvList = new ArrayList<List<String>>();
         CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "UTF-8"));
 
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        String tableName = "CsvRows_" + sdf.format(timestamp);
         String[] headers = csvReader.readNext();
         if (headers.length > 0)
             dynamoDbStorage.createTable(tableName);
 
+        String[] values = null;
+        int counter = 0;
         while((values = csvReader.readNext()) != null){
             counter++;
             if(counter % 2 == 0 && parity.equals("EVEN")){

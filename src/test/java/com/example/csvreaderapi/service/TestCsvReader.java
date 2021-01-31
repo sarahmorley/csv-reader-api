@@ -12,13 +12,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= TestConfigCsvReader.class)
-@SpringBootTest(properties = {"file.path=/PracticeFile.csv"})
+@SpringBootTest(properties = {"file.path=/TestFile.csv"})
 public class TestCsvReader {
 
 	@Autowired
@@ -36,105 +37,58 @@ public class TestCsvReader {
 	public void testDynamoCalledForOdd() throws IOException{
 		List<List<String>> rowListOdd = csvReader.loadCsv("ODD");
 		Mockito.verify(dynamoDbStorage, Mockito.times(1)).createTable(anyString());
-		Mockito.verify(dynamoDbStorage, Mockito.times(5)).save(anyString(), anyInt(), anyList(), anyList());
+		Mockito.verify(dynamoDbStorage, Mockito.times(2)).save(anyString(), anyInt(), anyList(), anyList());
 	}
-
 
 	@Test
 	public void testDynamoCalledForEven() throws IOException{
 		List<List<String>> rowListEven = csvReader.loadCsv("EVEN");
 		Mockito.verify(dynamoDbStorage, Mockito.times(1)).createTable(anyString());
-		Mockito.verify(dynamoDbStorage, Mockito.times(5)).save(anyString(), anyInt(), anyList(), anyList());
+		Mockito.verify(dynamoDbStorage, Mockito.times(2)).save(anyString(), anyInt(), anyList(), anyList());
 	}
 
 	@Test
 	public void testDynamoCalledForAll() throws IOException{
 		List<List<String>> rowListAll = csvReader.loadCsv("");
 		Mockito.verify(dynamoDbStorage, Mockito.times(1)).createTable(anyString());
-		Mockito.verify(dynamoDbStorage, Mockito.times(10)).save(anyString(), anyInt(), anyList(), anyList());
-	}
-
-	@Test
-	public void testNumberOfRowsReturned() throws IOException {
-		List<List<String>> rowListOdd = csvReader.loadCsv("ODD");
-		int countOddRows = rowListOdd.size();
-		assertEquals(5, countOddRows);
-
-		List<List<String>> rowListEven = csvReader.loadCsv("EVEN");
-		int countEvenRows = rowListEven.size();
-		assertEquals(5, countEvenRows);
-
-		List<List<String>> rowListAll = csvReader.loadCsv("");
-		int countAllRows = rowListAll.size();
-		assertEquals(10, countAllRows);
+		Mockito.verify(dynamoDbStorage, Mockito.times(4)).save(anyString(), anyInt(), anyList(), anyList());
 	}
 
 	@Test
 	public void testOddData() throws IOException {
-		List<List<String>> rowListOdd = csvReader.loadCsv("ODD");
-
-		List<String> testDataList = new ArrayList<>();
-		for (int i = 0; i < rowListOdd.size()-1; i++) {
-			List<String> rowData = rowListOdd.get(i);
-			testDataList.add(rowData.get(i));
-		}
-		assertEquals("1", testDataList.get(0));
-		assertEquals("data3", testDataList.get(1));
-		assertEquals("data2-5", testDataList.get(2));
-		assertEquals("data3-7", testDataList.get(3));
+		List<List<String>> actaulRowListOdd = csvReader.loadCsv("ODD");
+		List<List<String>> expectedRowListOdd = new ArrayList<>();
+		List<String> rowsToAddOne = Arrays.asList("1","data1","data2-1","data3-1");
+		List<String> rowsToAddTwo = Arrays.asList("3","data3","data2-3","data3-3");
+		expectedRowListOdd.add(rowsToAddOne);
+		expectedRowListOdd.add(rowsToAddTwo);
+		assertEquals(expectedRowListOdd, actaulRowListOdd);
 	}
 
 	@Test
 	public void testEvenData() throws IOException {
-		List<List<String>> rowListEven = csvReader.loadCsv("EVEN");
-
-		List<String> testDataList = new ArrayList<>();
-		for (int i = 0; i < rowListEven.size()-1; i++) {
-			List<String> rowData = rowListEven.get(i);
-			testDataList.add(rowData.get(i));
-		}
-		assertEquals("2", testDataList.get(0));
-		assertEquals("data4", testDataList.get(1));
-		assertEquals("data2-6", testDataList.get(2));
-		assertEquals("data3-8", testDataList.get(3));
+		List<List<String>> actualRowListEven = csvReader.loadCsv("EVEN");
+		List<List<String>> expectedRowListEven = new ArrayList<>();
+		List<String> rowsToAddOne = Arrays.asList("2","data2","data2-2","data3-2");
+		List<String> rowsToAddTwo = Arrays.asList("4","data4","data2-4","data3-4");
+		expectedRowListEven.add(rowsToAddOne);
+		expectedRowListEven.add(rowsToAddTwo);
+		assertEquals(expectedRowListEven, actualRowListEven);
 	}
 
 	@Test
 	public void testAllData() throws IOException {
-		List<List<String>> rowListAll = csvReader.loadCsv("");
-		List<String> testDataList = new ArrayList<>();
-
-		for (int i = 0; i <=9; i++){
-			List<String> rowDataIncrementing = rowListAll.get(i);
-			testDataList.add(rowDataIncrementing.get(2));
-		}
-		assertEquals("data2-1", testDataList.get(0));
-		assertEquals("data2-2", testDataList.get(1));
-		assertEquals("data2-3", testDataList.get(2));
-		assertEquals("data2-4", testDataList.get(3));
-		assertEquals("data2-5", testDataList.get(4));
-		assertEquals("data2-6", testDataList.get(5));
-		assertEquals("data2-7", testDataList.get(6));
-		assertEquals("data2-8", testDataList.get(7));
-		assertEquals("data2-9", testDataList.get(8));
-		assertEquals("data2-10", testDataList.get(9));
-
-		testDataList.clear();
-
-		for (int i = 9; i >=0; i--){
-			List<String> rowDataDecrementing = rowListAll.get(i);
-			testDataList.add(rowDataDecrementing.get(1));
-		}
-		assertEquals("data10", testDataList.get(0));
-		assertEquals("data9", testDataList.get(1));
-		assertEquals("data8", testDataList.get(2));
-		assertEquals("data7", testDataList.get(3));
-		assertEquals("data6", testDataList.get(4));
-		assertEquals("data5", testDataList.get(5));
-		assertEquals("data4", testDataList.get(6));
-		assertEquals("data3", testDataList.get(7));
-		assertEquals("data2", testDataList.get(8));
-		assertEquals("data1", testDataList.get(9));
+		List<List<String>> actualRowListAll = csvReader.loadCsv("");
+		List<List<String>> expectedRowListAll = new ArrayList<>();
+		List<String> rowsToAddOne = Arrays.asList("1","data1","data2-1","data3-1");
+		List<String> rowsToAddTwo = Arrays.asList("2","data2","data2-2","data3-2");
+		List<String> rowsToAddThree = Arrays.asList("3","data3","data2-3","data3-3");
+		List<String> rowsToAddFour = Arrays.asList("4","data4","data2-4","data3-4");
+		expectedRowListAll.add(rowsToAddOne);
+		expectedRowListAll.add(rowsToAddTwo);
+		expectedRowListAll.add(rowsToAddThree);
+		expectedRowListAll.add(rowsToAddFour);
+		assertEquals(expectedRowListAll, actualRowListAll);
 	}
 
 }
