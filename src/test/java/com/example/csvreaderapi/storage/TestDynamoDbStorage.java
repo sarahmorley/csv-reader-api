@@ -5,7 +5,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.example.csvreaderapi.configuration.TestConfig;
+import com.example.csvreaderapi.configuration.TestConfigDynamo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -15,11 +15,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.*;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes= TestConfig.class)
-public class DynamoDbStorageTest {
+@ContextConfiguration(classes= TestConfigDynamo.class)
+public class TestDynamoDbStorage {
 
     @Autowired
     private DynamoDbStorage dynamoDbStorage;

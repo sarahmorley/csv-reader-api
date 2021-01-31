@@ -6,15 +6,19 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.example.csvreaderapi.service.CsvReader;
 import com.example.csvreaderapi.storage.DynamoDbStorage;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-
 @Configuration
-@Import({CsvReader.class, DynamoDbStorage.class})
-public class TestConfig {
+@Import({CsvReader.class})
+public class TestConfigCsvReader {
 
+    @Bean
+    public DynamoDbStorage dynamoDbStorage (){
+        return Mockito.mock(DynamoDbStorage.class);
+    }
 
     @Bean
     public AWSStaticCredentialsProvider amazonAWSCredentials() {
@@ -30,5 +34,6 @@ public class TestConfig {
     public DynamoDB dynamoDB(AmazonDynamoDB client){
         return Mockito.mock(DynamoDB.class);
     }
+
 
 }

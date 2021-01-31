@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ public class CsvReader {
 
         while((values = csvReader.readNext()) != null){
             counter++;
-            //TOdo testing this part is key
             if(counter % 2 == 0 && parity.equals("EVEN")){
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
