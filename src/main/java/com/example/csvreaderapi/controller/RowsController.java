@@ -12,7 +12,8 @@ import java.util.*;
 @RestController
 public class RowsController {
 
-    //Todo final odd even
+    final String odd = "ODD";
+    final String even = "EVEN";
 
     @Autowired
     private CsvReader csvReader;
@@ -23,12 +24,11 @@ public class RowsController {
             parity = "";
 
         parity = parity.toUpperCase();
-        List<String> validParams = Arrays.asList("ODD", "EVEN", "");
+        List<String> validParams = Arrays.asList(odd, even, "");
 
         if(!validParams.contains(parity)){
             throw new InvalidQueryParamException();
         }
-
 
         List<List<String>> csvList = csvReader.loadCsv(parity);
 

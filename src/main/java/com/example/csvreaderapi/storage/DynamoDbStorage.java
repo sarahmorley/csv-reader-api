@@ -38,7 +38,7 @@ public class DynamoDbStorage {
                 .withReadCapacityUnits(1L)
                 .withWriteCapacityUnits(1L));
 
-        TableUtils.createTableIfNotExists(dynamoDbClient, request);
+        dynamoDbClient.createTable(request);
 
         try{
             TableUtils.waitUntilActive(dynamoDbClient, request.getTableName());

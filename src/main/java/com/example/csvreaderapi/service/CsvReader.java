@@ -30,7 +30,7 @@ public class CsvReader {
         String[] values = null;
         int counter = 0;
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        String tableName = "Rows_" + sdf.format(timestamp);
+        String tableName = "CsvRows_" + sdf.format(timestamp);
 
         InputStream inputStream = getClass().getResourceAsStream(csvFilePath);
         List<List<String>> csvList = new ArrayList<List<String>>();
