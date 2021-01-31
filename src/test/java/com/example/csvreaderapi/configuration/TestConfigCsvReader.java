@@ -6,7 +6,6 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.example.csvreaderapi.service.CsvReader;
 import com.example.csvreaderapi.storage.DynamoDbStorage;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
