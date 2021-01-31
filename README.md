@@ -12,7 +12,7 @@ I decided to use DynamoDB local as the database store.
 
 
 ## Build and Run
-*Run AWS DynamoDb locally
+### Run AWS DynamoDb locally
 
 Download DynamoDB local from the following link:
 https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html
@@ -23,20 +23,20 @@ To start DynamoDB on your computer, open a command prompt window, navigate to th
 ```
 java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
 ```
-Once dynamoDB local is running you query and list tables using the local shell @
+Once dynamoDB local is running you can query and list tables using the local shell @
 ```
 http://localhost:8000/shell/
 ```
 
-*Build and Run the csv-reader-api
+### Build and Run the csv-reader-api
 ```
 mvn clean package
 ```
-The built java jar can then be found in the target folder.
+The built java jar can then be found in the target folder. CD to target and run it using the following command
 
-Run it using the following command
+
 ```
-java jar csv-reader-api-*
+java -jar csv-reader-api-0.0.1-SNAPSHOT.jar
 ```
 
 The api can also be run locally in IntelliJ
