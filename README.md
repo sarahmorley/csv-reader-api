@@ -66,12 +66,15 @@ http://localhost:8080/rows?parity=ODD
 
 
 ## Testing
-Maven Surefire can be used to run the tests with the following command
+
+### Unit testing
+Maven Surefire can be used to run the units tests with the following command
 ```
 mvn clean test
 ```
 The TestCsvReader class overrides the 'file.name' value in the application.properties
 
 and points to a test csv called TestFiles.csv. 
+
 
 
