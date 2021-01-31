@@ -3,13 +3,21 @@ This is a REST API that can take in a query parameter and do the following:
 
 Read a CSV file from a folder.
 Based on the parameter it inserts either the odd or even CSV rows into AWS DynamoDB.
-If a parameter is not passed it inserts all the CSV rows into AWS DynamoDB.
-If then returns the requested CSV rows (all, even, or odd rows based on parameter) as a String Array.
+If a parameter is not passed it inserts all the CSV rows into AWS DynamoDB (local version).
+It then returns the requested CSV rows (all, even, or odd rows) as a String Array.
 
-## Assumptions and Approach
-I decided to use DynamoDB local as the database store.
+The CSV file that the API reads is set in the application.properties 
+It is currently set as:
+```
+file.path = /PracticeFile.csv
+```
 
-
+## Technologies used
+*  Java 8
+*  Spring Boot
+*  Maven
+*  AWS DynamoDB local
+*  IDE: IntelliJ
 
 ## Build and Run
 ### Run AWS DynamoDb locally
@@ -62,5 +70,8 @@ Maven Surefire can be used to run the tests with the following command
 ```
 mvn clean test
 ```
+The TestCsvReader class overrides the 'file.name' value in the application.properties
+
+and points to a test csv called TestFiles.csv. 
 
 
