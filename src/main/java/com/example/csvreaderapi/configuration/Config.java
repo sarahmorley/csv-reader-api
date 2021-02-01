@@ -6,12 +6,12 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Config {
+    //These are only here as I am using DynamoDB local
     private String amazonAWSAccessKey = "test_access_key";
     private String amazonAWSSecretKey = "test_secret_key";
     private String awsDynamoDBUrl = "http://localhost:8000";
@@ -35,11 +35,5 @@ public class Config {
         DynamoDB dynamo = new DynamoDB(client);
         return dynamo;
     }
-/*
-    @Bean
-    public TableUtils tableUtils() {
-        TableUtils tableUtils = new TableUtils();
-        return tableUtils;
-    }
-*/
+
 }
