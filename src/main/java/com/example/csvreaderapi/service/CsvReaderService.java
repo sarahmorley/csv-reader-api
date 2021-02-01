@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class CsvReader {
+public class CsvReaderService {
 
     @Autowired
     private DynamoDbStorage dynamoDbStorage;
@@ -33,9 +33,10 @@ public class CsvReader {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String tableName = "CsvRows_" + sdf.format(timestamp);
         String[] headers = csvReader.readNext();
-        if (headers.length > 0)
-            dynamoDbStorage.createTable(tableName);
-
+        if (headers.length == 0)
+            return csvList;
+        
+        dynamoDbStorage.createTable(tableName);
         String[] values = null;
         int counter = 0;
         while((values = csvReader.readNext()) != null){

@@ -20,10 +20,10 @@ import static org.mockito.ArgumentMatchers.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes= TestConfigCsvReader.class)
 @SpringBootTest(properties = {"file.path=/TestFile.csv"})
-public class TestCsvReader {
+public class TestCsvReaderService {
 
 	@Autowired
-	private CsvReader csvReader;
+	private CsvReaderService csvReaderService;
 
 	@Autowired
 	private DynamoDbStorage dynamoDbStorage;
@@ -35,28 +35,28 @@ public class TestCsvReader {
 
 	@Test
 	public void testDynamoCalledForOdd() throws IOException{
-		List<List<String>> rowListOdd = csvReader.loadCsv("ODD");
+		List<List<String>> rowListOdd = csvReaderService.loadCsv("ODD");
 		Mockito.verify(dynamoDbStorage, Mockito.times(1)).createTable(anyString());
 		Mockito.verify(dynamoDbStorage, Mockito.times(2)).save(anyString(), anyInt(), anyList(), anyList());
 	}
 
 	@Test
 	public void testDynamoCalledForEven() throws IOException{
-		List<List<String>> rowListEven = csvReader.loadCsv("EVEN");
+		List<List<String>> rowListEven = csvReaderService.loadCsv("EVEN");
 		Mockito.verify(dynamoDbStorage, Mockito.times(1)).createTable(anyString());
 		Mockito.verify(dynamoDbStorage, Mockito.times(2)).save(anyString(), anyInt(), anyList(), anyList());
 	}
 
 	@Test
 	public void testDynamoCalledForAll() throws IOException{
-		List<List<String>> rowListAll = csvReader.loadCsv("");
+		List<List<String>> rowListAll = csvReaderService.loadCsv("");
 		Mockito.verify(dynamoDbStorage, Mockito.times(1)).createTable(anyString());
 		Mockito.verify(dynamoDbStorage, Mockito.times(4)).save(anyString(), anyInt(), anyList(), anyList());
 	}
 
 	@Test
 	public void testOddData() throws IOException {
-		List<List<String>> actaulRowListOdd = csvReader.loadCsv("ODD");
+		List<List<String>> actaulRowListOdd = csvReaderService.loadCsv("ODD");
 		List<List<String>> expectedRowListOdd = new ArrayList<>();
 		List<String> rowsToAddOne = Arrays.asList("1","data1","data2-1","data3-1");
 		List<String> rowsToAddTwo = Arrays.asList("3","data3","data2-3","data3-3");
@@ -67,7 +67,7 @@ public class TestCsvReader {
 
 	@Test
 	public void testEvenData() throws IOException {
-		List<List<String>> actualRowListEven = csvReader.loadCsv("EVEN");
+		List<List<String>> actualRowListEven = csvReaderService.loadCsv("EVEN");
 		List<List<String>> expectedRowListEven = new ArrayList<>();
 		List<String> rowsToAddOne = Arrays.asList("2","data2","data2-2","data3-2");
 		List<String> rowsToAddTwo = Arrays.asList("4","data4","data2-4","data3-4");
@@ -78,7 +78,7 @@ public class TestCsvReader {
 
 	@Test
 	public void testAllData() throws IOException {
-		List<List<String>> actualRowListAll = csvReader.loadCsv("");
+		List<List<String>> actualRowListAll = csvReaderService.loadCsv("");
 		List<List<String>> expectedRowListAll = new ArrayList<>();
 		List<String> rowsToAddOne = Arrays.asList("1","data1","data2-1","data3-1");
 		List<String> rowsToAddTwo = Arrays.asList("2","data2","data2-2","data3-2");

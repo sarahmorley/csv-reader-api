@@ -6,6 +6,7 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,5 +35,11 @@ public class Config {
         DynamoDB dynamo = new DynamoDB(client);
         return dynamo;
     }
-
+/*
+    @Bean
+    public TableUtils tableUtils() {
+        TableUtils tableUtils = new TableUtils();
+        return tableUtils;
+    }
+*/
 }

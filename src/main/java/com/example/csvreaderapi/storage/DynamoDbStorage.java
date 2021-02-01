@@ -43,7 +43,7 @@ public class DynamoDbStorage {
             TableUtils.waitUntilActive(dynamoDbClient, request.getTableName());
         }
         catch (Exception e){
-            System.err.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -58,14 +58,7 @@ public class DynamoDbStorage {
         }
 
         PutItemRequest putItemRequest = new PutItemRequest(tableName, map);
-
-        try {
-            dynamoDbClient.putItem(putItemRequest);
-        }
-        catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-
+        dynamoDbClient.putItem(putItemRequest);
     }
 }
 

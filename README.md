@@ -1,4 +1,4 @@
-
+# Csv-Reader-Api #
 This is a REST API that can take in a query parameter and do the following:
 
 Read a CSV file from a folder.
@@ -17,7 +17,6 @@ file.path = /PracticeFile.csv
 *  Spring Boot
 *  Maven
 *  AWS DynamoDB local
-*  IDE: IntelliJ
 
 ## Build and Run
 ### Run AWS DynamoDb locally

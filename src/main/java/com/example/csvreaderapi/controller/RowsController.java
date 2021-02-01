@@ -1,7 +1,7 @@
 package com.example.csvreaderapi.controller;
 
 import com.example.csvreaderapi.exception.InvalidQueryParamException;
-import com.example.csvreaderapi.service.CsvReader;
+import com.example.csvreaderapi.service.CsvReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +16,7 @@ public class RowsController {
     final String even = "EVEN";
 
     @Autowired
-    private CsvReader csvReader;
+    private CsvReaderService csvReaderService;
 
     @GetMapping("/rows")
     public List<List<String>> getRows (@RequestParam(required = false) String parity) throws IOException {
@@ -30,7 +30,7 @@ public class RowsController {
             throw new InvalidQueryParamException();
         }
 
-        List<List<String>> csvList = csvReader.loadCsv(parity);
+        List<List<String>> csvList = csvReaderService.loadCsv(parity);
 
         return csvList;
     }
