@@ -136,6 +136,34 @@
 				</executions>
 			</plugin>
 
+			<!-- Execute application jar for the ITs -->
+			<plugin>
+				<groupId>com.bazaarvoice.maven.plugins</groupId>
+				<artifactId>process-exec-maven-plugin</artifactId>
+				<version>0.4</version>
+				<executions>
+					<!--Start process-->
+					<execution>
+						<id>start-jar</id>
+						<phase>pre-integration-test</phase>
+						<goals><goal>start</goal></goals>
+						<configuration>
+							<arguments>
+								<argument>java</argument>
+								<argument>-jar</argument>
+								<argument>csv-reader-api-0.0.1-SNAPSHOT.jar</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<!--Stop Process-->
+					<execution>
+						<id>stop-jar-process</id>
+						<phase>post-integration-test</phase>
+						<goals><goal>stop-all</goal></goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
