@@ -115,6 +115,27 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Run DynamoDB local -->
+			<plugin>
+				<groupId>com.jcabi</groupId>
+				<artifactId>jcabi-dynamodb-maven-plugin</artifactId>
+				<version>0.9.1</version>
+				<executions>
+					<execution>
+						<id>dynamodb-integration-test</id>
+						<goals>
+							<goal>start</goal>
+							<goal>stop</goal>
+						</goals>
+						<configuration>
+							<port>8000</port>
+							<dist>${project.build.directory}/dynamodb</dist>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
