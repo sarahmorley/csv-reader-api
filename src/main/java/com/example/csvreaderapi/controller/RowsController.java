@@ -14,6 +14,7 @@ public class RowsController {
 
     final String odd = "ODD";
     final String even = "EVEN";
+    final List<String> validParams = Arrays.asList(odd, even, "");
 
     @Autowired
     private CsvReaderService csvReaderService;
@@ -24,7 +25,6 @@ public class RowsController {
             parity = "";
 
         parity = parity.toUpperCase();
-        List<String> validParams = Arrays.asList(odd, even, "");
 
         if(!validParams.contains(parity)){
             throw new InvalidQueryParamException();
