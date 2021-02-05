@@ -76,4 +76,17 @@ The TestCsvReader class overrides the 'file.name' value in the application.prope
 and points to a test csv called TestFiles.csv. 
 
 
+### Integration testing
+Maven Failsafe can be used to run the integration tests with the following command
+```
+mvn clean verify
+```
+This command will 
+* Download and unpack DynamoDb Local to disk 
+* Run DynamoDB local
+* Execute the application jar
+* Run the integration tests
+
+
+
 
