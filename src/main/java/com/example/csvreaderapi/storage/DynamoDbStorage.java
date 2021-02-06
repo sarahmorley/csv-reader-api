@@ -2,9 +2,7 @@ package com.example.csvreaderapi.storage;
 
 import java.util.*;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-
 import com.amazonaws.services.dynamodbv2.model.*;
-import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,9 @@ public class DynamoDbStorage {
 
     @Autowired
     private AmazonDynamoDB dynamoDbClient;
+
+    @Autowired
+    private AwsTableUtils awsTableUtils;
 
     final String hashKey = "CsvRowId";
     final String rangeKey = "CsvRowNumber";
@@ -38,17 +39,7 @@ public class DynamoDbStorage {
                 .withWriteCapacityUnits(1L));
 
         dynamoDbClient.createTable(request);
-
-        try{
-            TableUtils.waitUntilActive(dynamoDbClient, request.getTableName());
-            logger.info(request.getTableName() + " is active");
-        }
-        catch (Exception e){
-            System.err.println(e.getMessage());
-            // This would handle error better. But, this is causing error in unit test. I have not yet discovered
-            // the correct way to mock the static TableUtils method.
-            //throw new RuntimeException("table not active", e);
-        }
+        awsTableUtils.CheckTableIsActive(request);
     }
 
     public void save(String tableName, int counter, List<String> headers, List<String> values){
