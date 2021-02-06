@@ -14,9 +14,6 @@ public class DynamoDbStorage {
     @Autowired
     private AmazonDynamoDB dynamoDbClient;
 
-    @Autowired
-    private DynamoDB dynamo;
-
     final String hashKey = "CsvRowId";
     final String rangeKey = "CsvRowNumber";
 
