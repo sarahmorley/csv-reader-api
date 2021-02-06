@@ -2,6 +2,8 @@ package com.example.csvreaderapi.service;
 
 import com.example.csvreaderapi.storage.DynamoDbStorage;
 import com.opencsv.CSVReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,9 +25,12 @@ public class CsvReaderService {
     @Value("${file.path}")
     private String csvFilePath;
 
+    private static final Logger logger = LoggerFactory.getLogger(CsvReaderService.class);
+
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
 
     public List<List<String>> loadCsv(String parity) throws IOException {
+        logger.info("Loading csv file to read " + parity + " rows");
         InputStream inputStream = getClass().getResourceAsStream(csvFilePath);
         List<List<String>> csvList = new ArrayList<List<String>>();
         CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -33,9 +38,11 @@ public class CsvReaderService {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String tableName = "CsvRows_" + sdf.format(timestamp);
         String[] headers = csvReader.readNext();
-        if (headers.length == 0)
+        if (headers.length == 0) {
+            logger.info(csvFilePath + " is an empty file");
             return csvList;
-        
+        }
+
         dynamoDbStorage.createTable(tableName);
         String[] values = null;
         int counter = 0;
@@ -53,7 +60,6 @@ public class CsvReaderService {
                 csvList.add(Arrays.asList(values));
                 dynamoDbStorage.save(tableName, counter, Arrays.asList(headers), Arrays.asList(values));
             }
-
         }
         return csvList;
     }
