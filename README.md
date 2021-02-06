@@ -88,5 +88,9 @@ This command will
 * Run the integration tests
 
 
+## Logging
+
+Logging set up using LogBack
+
 
 
