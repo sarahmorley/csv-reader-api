@@ -2,6 +2,8 @@ package com.example.csvreaderapi.storage;
 
 import java.util.*;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,31 +17,26 @@ public class DynamoDbStorage {
     private AmazonDynamoDB dynamoDbClient;
 
     @Autowired
-    private AwsTableUtils awsTableUtils;
+    private DynamoDB dynamoDB;
 
     final String hashKey = "CsvRowId";
     final String rangeKey = "CsvRowNumber";
     private static final Logger logger = LoggerFactory.getLogger(DynamoDbStorage.class);
 
     public void createTable(String tableName) {
-        List<AttributeDefinition> attributeDefinitions= new ArrayList<AttributeDefinition>();
-        attributeDefinitions.add(new AttributeDefinition().withAttributeName(hashKey).withAttributeType("S"));
-        attributeDefinitions.add(new AttributeDefinition().withAttributeName(rangeKey).withAttributeType("N"));
+        Table table = dynamoDB.createTable(
+                tableName,
+                Arrays.asList(new KeySchemaElement(hashKey, KeyType.HASH),
+                              new KeySchemaElement(rangeKey, KeyType.RANGE)),
+                Arrays.asList(new AttributeDefinition(hashKey, ScalarAttributeType.S),
+                              new AttributeDefinition(rangeKey, ScalarAttributeType.N)),
+                new ProvisionedThroughput(1L, 1L));
 
-        List<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
-        keySchema.add(new KeySchemaElement().withAttributeName(hashKey).withKeyType(KeyType.HASH));
-        keySchema.add(new KeySchemaElement().withAttributeName(rangeKey).withKeyType(KeyType.RANGE));
-
-        CreateTableRequest request = new CreateTableRequest()
-                .withTableName(tableName)
-                .withKeySchema(keySchema)
-                .withAttributeDefinitions(attributeDefinitions)
-                .withProvisionedThroughput(new ProvisionedThroughput()
-                .withReadCapacityUnits(1L)
-                .withWriteCapacityUnits(1L));
-
-        dynamoDbClient.createTable(request);
-        awsTableUtils.CheckTableIsActive(request);
+        try {
+            table.waitForActive();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(tableName + " never became active.", e);
+        }
     }
 
     public void save(String tableName, int counter, List<String> headers, List<String> values){

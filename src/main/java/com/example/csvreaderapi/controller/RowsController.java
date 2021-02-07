@@ -12,12 +12,10 @@ import java.util.*;
 @RestController
 public class RowsController {
 
-    final String odd = "ODD";
-    final String even = "EVEN";
-    final List<String> validParams = Arrays.asList(odd, even, "");
-
     @Autowired
     private CsvReaderService csvReaderService;
+
+    final List<String> validParams = Arrays.asList(CsvReaderService.odd, CsvReaderService.even, "");
 
     @GetMapping("/rows")
     public List<List<String>> getRows (@RequestParam(required = false) String parity) throws IOException {

@@ -87,6 +87,8 @@ This command will
 * Execute the application jar
 * Run the integration tests
 
+Note: Make sure Dynamo DB local isn't already running locally on your machine on the port configured in the IT config.
+
 
 ## Logging
 
