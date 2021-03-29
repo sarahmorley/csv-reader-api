@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Import;
 @Import({DynamoDbStorage.class})
 public class TestConfigDynamo {
 
-
     @Bean
     public AWSStaticCredentialsProvider amazonAWSCredentials() {
         return Mockito.mock(AWSStaticCredentialsProvider.class);

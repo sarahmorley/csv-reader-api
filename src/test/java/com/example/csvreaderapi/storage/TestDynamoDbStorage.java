@@ -1,10 +1,9 @@
 package com.example.csvreaderapi.storage;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.model.*;
 import com.example.csvreaderapi.configuration.TestConfigDynamo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +24,9 @@ public class TestDynamoDbStorage {
 
     @Autowired
     private AmazonDynamoDB dynamoDbClient;
+
+    @Autowired
+    private DynamoDB dynamoDB;
 
     final String tableName = "CsvTestTable";
     final String hashKey = "CsvRowId";
@@ -58,15 +60,23 @@ public class TestDynamoDbStorage {
 
     @Test
     public void testCreateTable() {
-        dynamoDbStorage.createTable(tableName);
-        ArgumentCaptor <CreateTableRequest> argumentCaptor = ArgumentCaptor.forClass(CreateTableRequest.class);
-        Mockito.verify(dynamoDbClient).createTable(argumentCaptor.capture());
-        CreateTableRequest capturedArgument = argumentCaptor.getValue();
+        Mockito.when(dynamoDB.createTable(Mockito.eq(tableName), Mockito.anyList(), Mockito.anyList(), Mockito.any()))
+               .thenReturn(Mockito.mock(Table.class));
 
-        String actualTableName = capturedArgument.getTableName();
+        dynamoDbStorage.createTable(tableName);
+
+        ArgumentCaptor <String> argumentCaptorTableName = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor <List<KeySchemaElement>> argumentCaptorKeys = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor <List<AttributeDefinition>> argumentCaptorAttributes = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor <ProvisionedThroughput> argumentCaptorThroughput = ArgumentCaptor.forClass(ProvisionedThroughput.class);
+
+        Mockito.verify(dynamoDB).createTable(argumentCaptorTableName.capture(), argumentCaptorKeys.capture(),
+                                             argumentCaptorAttributes.capture(), argumentCaptorThroughput.capture());
+
+        String actualTableName = argumentCaptorTableName.getValue();
         assertEquals(tableName, actualTableName);
 
-        List<KeySchemaElement> actualKeysCreated = capturedArgument.getKeySchema();
+        List<KeySchemaElement> actualKeysCreated = argumentCaptorKeys.getValue();
         String actualHashKeyName = actualKeysCreated.get(0).getAttributeName();
         String actualRangeKeyName = actualKeysCreated.get(1).getAttributeName();
 

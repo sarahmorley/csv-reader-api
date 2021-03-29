@@ -3,8 +3,10 @@ package com.example.csvreaderapi.storage;
 import java.util.*;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
-import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,38 +17,25 @@ public class DynamoDbStorage {
     private AmazonDynamoDB dynamoDbClient;
 
     @Autowired
-    private DynamoDB dynamo;
+    private DynamoDB dynamoDB;
 
     final String hashKey = "CsvRowId";
     final String rangeKey = "CsvRowNumber";
+    private static final Logger logger = LoggerFactory.getLogger(DynamoDbStorage.class);
 
     public void createTable(String tableName) {
-        List<AttributeDefinition> attributeDefinitions= new ArrayList<AttributeDefinition>();
-        attributeDefinitions.add(new AttributeDefinition().withAttributeName(hashKey).withAttributeType("S"));
-        attributeDefinitions.add(new AttributeDefinition().withAttributeName(rangeKey).withAttributeType("N"));
+        Table table = dynamoDB.createTable(
+                tableName,
+                Arrays.asList(new KeySchemaElement(hashKey, KeyType.HASH),
+                              new KeySchemaElement(rangeKey, KeyType.RANGE)),
+                Arrays.asList(new AttributeDefinition(hashKey, ScalarAttributeType.S),
+                              new AttributeDefinition(rangeKey, ScalarAttributeType.N)),
+                new ProvisionedThroughput(1L, 1L));
 
-        List<KeySchemaElement> keySchema = new ArrayList<KeySchemaElement>();
-        keySchema.add(new KeySchemaElement().withAttributeName(hashKey).withKeyType(KeyType.HASH));
-        keySchema.add(new KeySchemaElement().withAttributeName(rangeKey).withKeyType(KeyType.RANGE));
-
-        CreateTableRequest request = new CreateTableRequest()
-                .withTableName(tableName)
-                .withKeySchema(keySchema)
-                .withAttributeDefinitions(attributeDefinitions)
-                .withProvisionedThroughput(new ProvisionedThroughput()
-                .withReadCapacityUnits(1L)
-                .withWriteCapacityUnits(1L));
-
-        dynamoDbClient.createTable(request);
-
-        try{
-            TableUtils.waitUntilActive(dynamoDbClient, request.getTableName());
-        }
-        catch (Exception e){
-            System.err.println(e.getMessage());
-            // This would handle error better. But, this is causing error in unit test. I have not yet discovered
-            // the correct way to mock the static TableUtils method.
-            //throw new RuntimeException(e);
+        try {
+            table.waitForActive();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(tableName + " never became active.", e);
         }
     }
 
@@ -62,6 +51,7 @@ public class DynamoDbStorage {
 
         PutItemRequest putItemRequest = new PutItemRequest(tableName, map);
         dynamoDbClient.putItem(putItemRequest);
+        logger.info("Row saved with hashKey value of " + hashkeyValue + " and rangeKey value of " + counter);
     }
 }
 

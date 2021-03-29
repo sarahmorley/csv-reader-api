@@ -34,5 +34,4 @@ public class TestConfigCsvReader {
         return Mockito.mock(DynamoDB.class);
     }
 
-
 }
